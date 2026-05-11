@@ -337,7 +337,10 @@ function AppContent() {
   }
 
   // No session → login (skip in dev mode when VITE_DEV_ORG_ID is set)
-  if (!isAuthenticated && !import.meta.env.VITE_DEV_ORG_ID) return <GTLLoginPage />;
+  // Auth disabled for now — dashboard always loads MPS data directly.
+  // Re-enable when expanding to multiple orgs:
+  // if (!isAuthenticated && !import.meta.env.VITE_DEV_ORG_ID) return <GTLLoginPage />;
+  if (false) return <GTLLoginPage />;
 
   // Authenticated → dashboard
   return <DashboardApp />;

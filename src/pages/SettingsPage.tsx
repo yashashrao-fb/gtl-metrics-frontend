@@ -1,7 +1,8 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Shield, Map as MapIcon, FileEdit, Info, AlertTriangle, CheckCircle } from "lucide-react";
-import { useSettings } from "../context/SettingsContext";
+import { Shield, Map as MapIcon, FileEdit, Info, AlertTriangle, CheckCircle, Globe } from "lucide-react";
+import { useSettings, TimezoneOption } from "../context/SettingsContext";
+import { TZ_LABELS } from "../lib/timezone";
 import { useGtlHttp } from "../lib/useGtlHttp";
 
 export default function SettingsPage() {
@@ -153,7 +154,45 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Section 3: AI Prompt Generator */}
+        {/* Section 3: Timezone */}
+        <div className="flex flex-col gap-4 p-6 bg-zinc-900/40 backdrop-blur-md border border-white/5 rounded-3xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Globe size={80} className="text-primary" />
+          </div>
+
+          <div className="flex flex-col gap-1 mb-2">
+            <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.2em] text-primary uppercase">
+              <Globe size={12} />
+              <span>Display Timezone</span>
+            </div>
+            <h2 className="text-xl font-bold text-on-surface">Timezone</h2>
+          </div>
+
+          <p className="text-sm text-zinc-400 leading-relaxed font-body italic">
+            All flight times across the dashboard will be displayed in the selected timezone.
+          </p>
+
+          <div className="flex flex-col gap-2 mt-2">
+            {(['uk', 'ist', 'utc'] as TimezoneOption[]).map((tz) => (
+              <button
+                key={tz}
+                onClick={() => updateSettings({ timezone: tz })}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
+                  settings.timezone === tz
+                    ? 'bg-primary/10 border-primary/40 text-white'
+                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-white/20'
+                }`}
+              >
+                <span className="text-sm font-medium">{TZ_LABELS[tz]}</span>
+                {settings.timezone === tz && (
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 4: AI Prompt Generator */}
         <div className="lg:col-span-2 flex flex-col gap-6 p-8 bg-zinc-900/60 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl relative">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.4em] text-primary uppercase">

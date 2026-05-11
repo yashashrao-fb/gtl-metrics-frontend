@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, Check, Search, Calendar, MapPin, Gauge, Car, Bike, PersonStanding as Run, Rocket, MessageSquare, Navigation, Copy, CheckCheck } from "lucide-react";
 import { useSettings } from "../context/SettingsContext";
+import { formatTime, formatTimeWithSeconds, formatDate } from "../lib/timezone";
 import { useGtlHttp } from "../lib/useGtlHttp";
 import FlightMap from "../components/FlightMap";
 
@@ -75,11 +76,14 @@ interface FlightDetailUI {
   gtlLng: number | null;
 }
 
-function transformDetail(d: any): FlightDetailUI {
+function transformDetail(d: any, tz: import('../context/SettingsContext').TimezoneOption): FlightDetailUI {
+  const takeoffIso = d.takeoff_time_iso ?? null;
+  const landingIso = d.landing_time_iso ?? null;
+
   const manualModes: ManualMode[] = (d.manual_modes ?? []).map((m: any) => ({
     mode: m.mode === "walk" ? "run" : m.mode,
-    takeoff: d.takeoff_time?.substring(0, 5) ?? "—",
-    reachGtl: m.eta_time ?? "—",
+    takeoff: takeoffIso ? formatTime(takeoffIso, tz) : (d.takeoff_time?.substring(0, 5) ?? "—"),
+    reachGtl: m.eta_iso ? formatTime(m.eta_iso, tz) : (m.eta_time ?? "—"),
     eta: m.travel_seconds ? `${Math.floor(m.travel_seconds / 60)}min` : "—",
     saved: m.time_saved_seconds ? `${Math.floor(m.time_saved_seconds / 60)}min` : "—",
   }));
@@ -92,8 +96,8 @@ function transformDetail(d: any): FlightDetailUI {
 
   return {
     id: d.flight_id ?? d.id,
-    date: d.date ?? "—",
-    time: d.takeoff_time?.substring(0, 5) ?? "—",
+    date: takeoffIso ? formatDate(takeoffIso, tz) : (d.date ?? "—"),
+    time: takeoffIso ? formatTime(takeoffIso, tz) : (d.takeoff_time?.substring(0, 5) ?? "—"),
     triggerType: d.trigger_type,
     droneName: d.drone_name ?? d.drone_id ?? "—",
     dockName: d.dock_name ?? "—",
@@ -102,8 +106,8 @@ function transformDetail(d: any): FlightDetailUI {
     duration: d.drone_time_seconds ? formatDuration(d.drone_time_seconds) : "—",
     maxAltitude: d.max_altitude_m != null ? `${d.max_altitude_m}m` : "—",
     maxSpeed: d.max_speed_kmh != null ? `${d.max_speed_kmh} km/h` : "—",
-    takeoffTime: d.takeoff_time ?? "—",
-    landingTime: d.landing_time ?? "—",
+    takeoffTime: takeoffIso ? formatTimeWithSeconds(takeoffIso, tz) : (d.takeoff_time ?? "—"),
+    landingTime: landingIso ? formatTimeWithSeconds(landingIso, tz) : (d.landing_time ?? "—"),
     avgSaved: d.avg_saved_minutes != null ? String(d.avg_saved_minutes) : "—",
     note: d.note ?? null,
     manualModes,
@@ -209,7 +213,7 @@ export default function FlightDataPage() {
     setPhase("detail");
     try {
       const res: any = await http.get(`/flights/${flightId}`);
-      setSelectedFlightDetail(transformDetail(res.data));
+      setSelectedFlightDetail(transformDetail(res.data, activeSettings.timezone ?? 'uk'));
     } catch (err) {
       console.error("[FlightDataPage detail]", err);
     } finally {
@@ -447,7 +451,9 @@ export default function FlightDataPage() {
                     <div className="p-6">
                       <div className="flex justify-between items-center mb-6">
                         <div className="px-3 py-1 bg-secondary/10 border border-secondary/20 rounded-md shadow-[0_0_10px_rgba(250,133,0,0.1)]">
-                          <span className="text-[9px] font-black text-secondary tracking-widest uppercase">{flight.date}</span>
+                          <span className="text-[9px] font-black text-secondary tracking-widest uppercase">
+                            {flight.start_time_iso ? formatDate(flight.start_time_iso, activeSettings.timezone ?? 'uk') : flight.date}
+                          </span>
                         </div>
                         {activeSettings.postFlightAuth && !flight.verified && (
                           <div className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-md flex items-center gap-1.5">
@@ -490,7 +496,9 @@ export default function FlightDataPage() {
                             <Calendar className="w-3 h-3 text-secondary" />
                             <p className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold">Launch</p>
                           </div>
-                          <p className="text-[11px] font-black text-on-surface uppercase tracking-tight">{flight.time}</p>
+                          <p className="text-[11px] font-black text-on-surface uppercase tracking-tight">
+                            {flight.start_time_iso ? formatTime(flight.start_time_iso, activeSettings.timezone ?? 'uk') : flight.time}
+                          </p>
                         </div>
 
                         <div className="flex flex-col gap-1">

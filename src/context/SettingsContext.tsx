@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export type TimezoneOption = 'uk' | 'ist' | 'utc';
+
 export interface Settings {
   postFlightAuth: boolean;
   showMapVisual: boolean;
   reportPrompt: string;
+  timezone: TimezoneOption;
 }
 
 interface SettingsContextType {
@@ -36,6 +39,7 @@ export const INITIAL_SETTINGS: Settings = {
   postFlightAuth: false,
   showMapVisual: true,
   reportPrompt: DEFAULT_REPORT_PROMPT,
+  timezone: 'uk',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);

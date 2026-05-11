@@ -6,28 +6,18 @@ import { useSettings } from "../context/SettingsContext";
 
 function DroneIcon({ className }: { className?: string }) {
   return (
-    <svg 
-      viewBox="0 0 100 100" 
-      className={className} 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {/* Central Body Archetype */}
-      <path d="M30 60 Q50 40 70 60 H30 Z" fill="currentColor" fillOpacity="0.1" />
-      <path d="M30 60 Q50 40 70 60" />
-      
-      {/* Tactical Arm & Rotor Assembly (Left) */}
-      <path d="M35 60 L25 40" />
-      <path d="M15 40 H35" />
-      <path d="M35 60 L25 80 V90" />
-      
-      {/* Tactical Arm & Rotor Assembly (Right) */}
-      <path d="M65 60 L75 40" />
-      <path d="M65 40 H85" />
-      <path d="M65 60 L75 80 V90" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 8L12 16" />
+      <path d="M8 12L16 12" />
+      <circle cx="6" cy="6" r="2" />
+      <circle cx="18" cy="6" r="2" />
+      <circle cx="18" cy="18" r="2" />
+      <circle cx="6" cy="18" r="2" />
+      <path d="M7.5 7.5L10 10" />
+      <path d="M16.5 7.5L14 10" />
+      <path d="M16.5 16.5L14 14" />
+      <path d="M7.5 16.5L10 14" />
+      <rect x="10" y="10" width="4" height="4" rx="1" />
     </svg>
   );
 }

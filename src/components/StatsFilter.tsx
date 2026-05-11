@@ -130,7 +130,7 @@ export default function StatsFilter({ activeTimeRange, onApply }: StatsFilterPro
               {/* Apply Button */}
               <button
                 onClick={handleApply}
-                className="w-full py-3 bg-primary hover:bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-95"
+                className="w-full py-3 bg-primary hover:bg-zinc-200 text-black text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-95"
               >
                 Apply Filters
               </button>

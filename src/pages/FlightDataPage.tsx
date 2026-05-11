@@ -99,7 +99,7 @@ function transformDetail(d: any): FlightDetailUI {
     dockName: d.dock_name ?? "—",
     distance: d.flight_distance_m ? `${(d.flight_distance_m / 1000).toFixed(1)} km` : "—",
     gtlDistance: d.gtl_distance_m ? `${(d.gtl_distance_m / 1000).toFixed(2)} km` : "—",
-    duration: d.drone_time_seconds ? `${Math.floor(d.drone_time_seconds / 60)}min` : "—",
+    duration: d.drone_time_seconds ? formatDuration(d.drone_time_seconds) : "—",
     maxAltitude: d.max_altitude_m != null ? `${d.max_altitude_m}m` : "—",
     maxSpeed: d.max_speed_kmh != null ? `${d.max_speed_kmh} km/h` : "—",
     takeoffTime: d.takeoff_time ?? "—",
@@ -114,6 +114,14 @@ function transformDetail(d: any): FlightDetailUI {
     gtlLat: d.gtl_lat ?? null,
     gtlLng: d.gtl_lng ?? null,
   };
+}
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s}s`;
+  if (s === 0) return `${m}min`;
+  return `${m}min ${s}s`;
 }
 
 function FlightIdRow({ flightId }: { flightId: string }) {
@@ -591,7 +599,7 @@ export default function FlightDataPage() {
                 <div className="flex flex-col gap-8 h-full">
                   <div className="flex flex-col gap-8 p-10 bg-gradient-to-br from-zinc-900 to-black border border-white/5 rounded-[40px] shadow-2xl flex-grow">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] leading-none">Drone Metrics</h3>
+                      <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em] leading-none">Drone Metrics</h3>
                       <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                         <DroneIcon className="w-5 h-5" />
                       </div>
@@ -599,14 +607,14 @@ export default function FlightDataPage() {
 
                     <div className="grid grid-cols-2 gap-y-12 gap-x-12">
                       {[
-                        { label: "Drone Name", value: selectedFlightDetail?.dockName },
+                        { label: "Drone Name", value: selectedFlightDetail?.droneName },
                         { label: "Dock Station", value: selectedFlightDetail?.dockName },
                         { label: "Distance to GTL", value: selectedFlightDetail?.gtlDistance },
                         { label: "Time to Target", value: selectedFlightDetail?.duration },
                         { label: "Total Flight Distance", value: selectedFlightDetail?.distance },
                         { label: "Takeoff Time", value: selectedFlightDetail?.takeoffTime },
                         { label: "Landing Time", value: selectedFlightDetail?.landingTime },
-                        { label: "Maximum Altitude", value: selectedFlightDetail?.maxAltitude },
+                        { label: "Max Speed", value: selectedFlightDetail?.maxSpeed },
                       ].map((item, idx) => (
                         <div key={idx} className="flex flex-col gap-2">
                           <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest leading-none">{item.label}</p>
@@ -619,7 +627,7 @@ export default function FlightDataPage() {
                     <div className="mt-8 flex flex-col gap-4">
                       <div className="flex items-center gap-2">
                         <MessageSquare size={12} className="text-emerald-500" />
-                        <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] leading-none">Flight Log / Notes</h3>
+                        <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em] leading-none">Flight Log / Notes</h3>
                       </div>
                       <div className="p-6 rounded-3xl border border-white/5 bg-black/40 min-h-[140px]">
                         {selectedFlightDetail?.note ? (
@@ -637,7 +645,7 @@ export default function FlightDataPage() {
                   <div className="flex flex-col gap-6 p-10 bg-gradient-to-br from-zinc-900 to-black border border-white/5 rounded-[40px] shadow-2xl flex-grow">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex flex-col gap-1">
-                        <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] leading-none">Manual Response Metrics</h3>
+                        <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em] leading-none">Manual Response Metrics</h3>
                         <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-[0.1em]">powered by Google Maps</p>
                       </div>
                       <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.15)]">

@@ -116,15 +116,31 @@ export default function ReportsPage() {
     setIsGenerating(id);
     setGenerateError(null);
     try {
-      await http.post('/reports/generate', {
+      const generateRes: any = await http.post('/reports/generate', {
         report_type: id,
         ...(customFrom && { from: customFrom }),
         ...(customTo && { to: customTo }),
       });
       setGenerationProgress(100);
+
       // Refresh recent reports
       const res: any = await http.get(`/reports/recent`);
-      setRecentReports(res.data?.reports ?? []);
+      const freshReports: RecentReport[] = res.data?.reports ?? [];
+      setRecentReports(freshReports);
+
+      // Auto-download: use storage_url from generate response or most recent report
+      const downloadUrl: string | undefined =
+        generateRes.data?.storage_url ?? freshReports[0]?.storage_url;
+      if (downloadUrl) {
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.download = '';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     } catch (err: any) {
       setGenerateError(err?.response?.data?.error ?? 'Report generation failed');
     } finally {

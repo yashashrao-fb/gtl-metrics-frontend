@@ -159,7 +159,7 @@ function DashboardApp() {
 
   const { activeSettings } = useSettings();
   const [activePage, setActivePage] = useState('dashboard');
-  const [unit, setUnit]             = useState<'hours' | 'minutes'>('hours');
+  const [unit, setUnit]             = useState<'hours' | 'minutes'>('minutes');
   // In dev mode (VITE_DEV_ORG_ID set), skip provision gate — backend uses DEV_CUSTOMER_ID
   const [provisioned, setProvisioned] = useState(!!import.meta.env.VITE_DEV_ORG_ID);
 
@@ -180,6 +180,13 @@ function DashboardApp() {
       .catch((err: any) => console.error('[DashboardApp KPIs]', err));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provisioned]);
+
+  // Auto-switch to hours when total minutes exceed 1000
+  useEffect(() => {
+    if (kpiData && kpiData.total_minutes_saved > 1000) {
+      setUnit('hours');
+    }
+  }, [kpiData]);
 
   const displayValue = kpiData
     ? (unit === 'hours' ? kpiData.total_hours_saved : kpiData.total_minutes_saved)

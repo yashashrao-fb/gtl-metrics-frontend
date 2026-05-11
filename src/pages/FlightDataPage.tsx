@@ -622,7 +622,6 @@ export default function FlightDataPage() {
                         { label: "Total Flight Distance", value: selectedFlightDetail?.distance },
                         { label: "Takeoff Time", value: selectedFlightDetail?.takeoffTime },
                         { label: "Landing Time", value: selectedFlightDetail?.landingTime },
-                        { label: "Max Speed", value: selectedFlightDetail?.maxSpeed },
                       ].map((item, idx) => (
                         <div key={idx} className="flex flex-col gap-2">
                           <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest leading-none">{item.label}</p>

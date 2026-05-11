@@ -62,7 +62,6 @@ interface FlightDetailUI {
   gtlDistance: string;
   duration: string;
   maxAltitude: string;
-  maxSpeed: string;
   takeoffTime: string;
   landingTime: string;
   avgSaved: string;
@@ -105,7 +104,6 @@ function transformDetail(d: any, tz: import('../context/SettingsContext').Timezo
     gtlDistance: d.gtl_distance_m ? `${(d.gtl_distance_m / 1000).toFixed(2)} km` : "—",
     duration: d.drone_time_seconds ? formatDuration(d.drone_time_seconds) : "—",
     maxAltitude: d.max_altitude_m != null ? `${d.max_altitude_m}m` : "—",
-    maxSpeed: d.max_speed_kmh != null ? `${d.max_speed_kmh} km/h` : "—",
     takeoffTime: takeoffIso ? formatTimeWithSeconds(takeoffIso, tz) : (d.takeoff_time ?? "—"),
     landingTime: landingIso ? formatTimeWithSeconds(landingIso, tz) : (d.landing_time ?? "—"),
     avgSaved: d.avg_saved_minutes != null ? String(d.avg_saved_minutes) : "—",
@@ -653,7 +651,7 @@ export default function FlightDataPage() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex flex-col gap-1">
                         <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em] leading-none">Manual Response Metrics</h3>
-                        <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-[0.1em]">powered by Google Maps</p>
+                        <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-[0.1em]">powered by OSRM</p>
                       </div>
                       <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                         <Gauge className="w-5 h-5" />

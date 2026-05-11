@@ -159,7 +159,7 @@ function DashboardApp() {
 
   const { activeSettings } = useSettings();
   const [activePage, setActivePage] = useState('dashboard');
-  const [unit, setUnit]             = useState<'hours' | 'minutes'>('minutes');
+  const [unit, setUnit]             = useState<'hours' | 'minutes' | 'seconds'>('seconds');
   // In dev mode (VITE_DEV_ORG_ID set), skip provision gate — backend uses DEV_CUSTOMER_ID
   const [provisioned, setProvisioned] = useState(!!import.meta.env.VITE_DEV_ORG_ID);
 
@@ -181,7 +181,7 @@ function DashboardApp() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provisioned]);
 
-  // Auto-switch to hours when total minutes exceed 1000
+  // Auto-switch to hours when total minutes exceed 1000; otherwise stay at seconds
   useEffect(() => {
     if (kpiData && kpiData.total_minutes_saved > 1000) {
       setUnit('hours');
@@ -189,7 +189,11 @@ function DashboardApp() {
   }, [kpiData]);
 
   const displayValue = kpiData
-    ? (unit === 'hours' ? kpiData.total_hours_saved : kpiData.total_minutes_saved)
+    ? unit === 'hours'
+      ? kpiData.total_hours_saved
+      : unit === 'minutes'
+        ? kpiData.total_minutes_saved
+        : Math.round(kpiData.total_minutes_saved * 60)
     : 0;
 
   const orbitKpis: OrbitKpis = {
@@ -261,8 +265,9 @@ function DashboardApp() {
 
             <div className="relative pb-24 flex flex-col items-center w-full max-w-4xl px-6">
               <div className="flex bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-full p-1 mb-12">
-                <button onClick={() => setUnit('hours')} className={`px-8 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${unit === 'hours' ? 'bg-primary text-on-primary shadow-lg' : 'text-zinc-500 hover:text-white'}`}>Hours Saved</button>
+                <button onClick={() => setUnit('seconds')} className={`px-8 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${unit === 'seconds' ? 'bg-primary text-on-primary shadow-lg' : 'text-zinc-500 hover:text-white'}`}>Seconds Saved</button>
                 <button onClick={() => setUnit('minutes')} className={`px-8 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${unit === 'minutes' ? 'bg-primary text-on-primary shadow-lg' : 'text-zinc-500 hover:text-white'}`}>Minutes Saved</button>
+                <button onClick={() => setUnit('hours')} className={`px-8 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${unit === 'hours' ? 'bg-primary text-on-primary shadow-lg' : 'text-zinc-500 hover:text-white'}`}>Hours Saved</button>
               </div>
               <motion.div key={unit} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: 'easeOut' }} className="text-center">
                 <h1 className="font-headline font-black text-8xl md:text-[14rem] leading-none tracking-tighter text-on-surface drop-shadow-[0_0_60px_rgba(130,236,255,0.15)]">
